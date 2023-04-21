@@ -60,6 +60,13 @@ blueprint:
           unit_of_measurement: minutes
           step: 1
           mode: slider
+          
+    optional_action:
+      name: Mensaje Alexa
+      description: Para reproducir mensajes por Alexa
+      selector:
+        action: {}
+      default: []
 
 trigger:
   - platform: mqtt
@@ -71,6 +78,8 @@ action:
     data: {}
     target:
       entity_id: !input input_boolean
+      
+    !input optional_action
       
   - delay:
       hours: 0
