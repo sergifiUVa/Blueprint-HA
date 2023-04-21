@@ -1,5 +1,5 @@
 blueprint:
-  name: Prueba plantilla 2
+  name: Prueba plantilla medicación
   description: Inicia recordatorio de toma de medicación a través de Alexa e informa al cuidador si se la ha tomado o no 
   domain: automation
   input:
@@ -61,14 +61,6 @@ blueprint:
           step: 1
           mode: slider
 
-    alexa_device:
-      name: Dispositivo Alexa
-      description: Elige el dispositivo Alexa para notificar al usuario
-      selector:
-        device:
-          integration: alexa_media
-          multiple: false
-
 trigger:
   - platform: mqtt
     topic: !input mqtt_topic
@@ -80,9 +72,55 @@ action:
     target:
       entity_id: !input input_boolean
       
-  - service: notify.alexa_media
-    data:
-      target: !input alexa_device
-      message: Hora de tomarse la medicación
-      data:
-        type: tts
+  - delay:
+      hours: 0
+      minutes: !input ask_later_wait_time
+      seconds: 0
+      milliseconds: 0
+      
+  - if:
+      - condition: state
+        entity_id: !input input_boolean
+        state: "on"
+    then:
+      - device_id: !input notify_device
+        domain: mobile_app
+        type: notify
+        title: !input notification_title_1
+        message: !input notification_message_1
+          
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: !input input_boolean
+          
+    else:
+      - repeat:
+          count: "3"
+          sequence:            
+            - delay:
+                hours: 0
+                minutes: !input ask_later_wait_time
+                seconds: 0
+                milliseconds: 0
+            - if:
+                - condition: state
+                  entity_id: !input input_boolean
+                  state: "on"
+              then:
+                - device_id: !input notify_device
+                  domain: mobile_app
+                  type: notify
+                  title: !input notification_title_1
+                  message: !input notification_message_1
+                    
+                - service: input_boolean.turn_off
+                  data: {}
+                  target:
+                    entity_id: !input input_boolean
+                - stop: Medicación tomada
+      - device_id: !input notify_device
+        domain: mobile_app
+        type: notify
+        title: !input notification_title_2
+        message: !input notification_message_2
