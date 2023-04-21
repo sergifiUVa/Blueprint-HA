@@ -64,10 +64,10 @@ blueprint:
     alexa_device:
       name: Dispositivo Alexa
       description: Elige el dispositivo Alexa para notificar al usuario
-      selector:
-        device:
-          integration: alexa_media
-          multiple: false
+     selector:
+        entity:
+          domain: media_player
+      default: ""
 
 trigger:
   - platform: mqtt
