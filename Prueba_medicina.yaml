@@ -86,10 +86,10 @@ action:
     target:
       entity_id: !input alexa_device
       
-  - device_id: !input alexa_device
-    domain: alexa_media
-    type: notify
-    message: Hora de tomarse la medicación
+  - service: notify.alexa_media
+    data:
+      target: !input alexa_device
+      message: Hora de tomarse la medicación
       
   - delay:
       hours: 0
@@ -116,10 +116,10 @@ action:
       - repeat:
           count: "3"
           sequence:
-            - device_id: !input alexa_device
-              domain: alexa_media
-              type: notify
-              message: Le recuerdo que debe tomarse la medicación 
+            - service: notify.alexa_media
+              data:
+                target: !input alexa_device
+                message: Le recuerdo que debe tomarse la medicación 
               
             - delay:
                 hours: 0
