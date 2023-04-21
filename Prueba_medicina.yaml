@@ -1,16 +1,16 @@
 blueprint:
   name: Prueba plantilla medicación
-  description: Get advanced notification and history for medication reminder
+  description: Inicia recordatorio de toma de medicación a través de Alexa e informa al cuidador si se la ha tomado o no 
   domain: automation
   input:
     mqtt_topic:
       name: Topic mqtt
-      description: What topic to send
+      description: El topic de mqtt al que se suscribe
       default: ""
       
     mqtt_payload:
       name: Payload mqtt
-      description: What payload it has to receive to activate
+      description: El payload que debe recibir par iniciar la automatización
       default: ""
         
     notify_device:
@@ -86,11 +86,10 @@ action:
     target:
       entity_id: !input alexa_device
       
-  - service: notify
-    target:
-      entity_id: !input alexa_device
-    data:
-      message: Hora de tomarse la medicación
+  - device_id: !input alexa_device
+    domain: alexa_media
+    type: notify
+    message: Hora de tomarse la medicación
       
   - delay:
       hours: 0
@@ -103,11 +102,10 @@ action:
         entity_id: !input input_boolean
         state: "on"
     then:
-      - service: notify
-        target:
-          entity_id: !input notify_device
-        data:
-          message: El usuario 1 se ha tomado la medicación
+      - device_id: !input notify_device
+        domain: mobile_app
+        title: !input notification_title_1
+        message: !input notification_message_1
           
       - service: input_boolean.turn_off
         data: {}
@@ -118,11 +116,11 @@ action:
       - repeat:
           count: "3"
           sequence:
-            - service: notify
-              target:
-                entity_id: !input alexa_device
-              data:
-                message: Le recuerdo que debe tomarse la medicación 
+            - device_id: !input alexa_device
+              domain: alexa_media
+              type: notify
+              message: Le recuerdo que debe tomarse la medicación 
+              
             - delay:
                 hours: 0
                 minutes: !input ask_later_wait_time
@@ -133,19 +131,17 @@ action:
                   entity_id: !input input_boolean
                   state: "on"
               then:
-                - service: notify
-                  target:
-                    entity_id: !input notify_device
-                  data:
-                    message: El usuario 1 se ha tomado las medicinas
+                - device_id: !input notify_device
+                  domain: mobile_app
+                  title: !input notification_title_1
+                  message: !input notification_message_1
                     
                 - service: input_boolean.turn_off
                   data: {}
                   target:
                     entity_id: !input input_boolean
                 - stop: Medicación tomada
-      - service: notify
-        target:
-          entity_id: !input notify_device
-        data:
-          message: El usuario 1 ha olvidado su medicación
+      - device_id: !input notify_device
+        domain: mobile_app
+        title: !input notification_title_2
+        message: !input notification_message_2
