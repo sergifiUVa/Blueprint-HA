@@ -1,0 +1,152 @@
+blueprint:
+  name: Advanced medication reminder (Android)
+  description: Get advanced notification and history for medication reminder
+  domain: automation
+  input:
+    mqtt_topic:
+      name: Topic mqtt
+      description: What topic to send
+      default: ""
+      
+    mqtt_payload:
+      name: Payload mqtt
+      description: What payload it has to receive to activate
+      default: ""
+        
+    notify_device:
+      name: Notification
+      description: Device needs to run the official Home Assistant app to receive notifications
+      selector:
+        device:
+          integration: mobile_app
+          multiple: false
+
+    input_boolean:
+      name: Dedicated input_boolean
+      description: Create and set here a input_boolean to handle history and state of the automation
+      selector:
+        entity:
+          domain: input_boolean
+          multiple: false
+
+    notification_title_1:
+      name: Notification title taken(Optional)
+      description: "Default: Medication taken"
+      default: "Medication taken"
+
+    notification_message_1:
+      name: Notification message (Optional)
+      description: "Default: El usuario 1 se ha tomado la medicación"
+      default: "El usuario 1 se ha tomado la medicación"
+
+    notification_title_2:
+      name: Notification title not taken(Optional)
+      description: "Default: Medication not taken"
+      default: "Medication not taken"
+
+    notification_message_2:
+      name: Notification message (Optional)
+      description: "Default: El usuario 1 NO se ha tomado la medicación"
+      default: "El usuario 1 NO se ha tomado la medicación"
+
+    ask_later_wait_time:
+      name: Wait time before next reminder
+      description: Minutes before notify again after a Ask later action.
+      default: 30
+      selector:
+        number:
+          min: 5
+          max: 1440
+          unit_of_measurement: minutes
+          step: 1
+          mode: slider
+
+    alexa_device:
+      name: Dispositivo Alexa
+      description: Elige el dispositivo Alexa para notificar al usuario
+      selector:
+        device:
+          integration: alexa_media
+          multiple: false
+
+trigger:
+  - platform: mqtt
+    topic: !mqtt_topic
+    payload: !mqtt_payload
+    
+action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: !input_boolean
+      
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.09
+    target:
+      entity_id: !alexa_device
+      
+  - service: notify
+    target:
+      entity_id: !alexa_device
+    data:
+      message: Hora de tomarse la medicación
+      
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+      
+  - if:
+      - condition: state
+        entity_id: !input_boolean
+        state: "on"
+    then:
+      - service: notify
+        target:
+          entity_id: !notify_device
+        data:
+          message: El usuario 1 se ha tomado la medicación
+          
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: !input_boolean
+          
+    else:
+      - repeat:
+          count: "3"
+          sequence:
+            - service: notify
+              target:
+                entity_id: !alexa_device
+              data:
+                message: Le recuerdo que debe tomarse la medicación
+                
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 10
+                milliseconds: 0
+            - if:
+                - condition: state
+                  entity_id: !input_boolean
+                  state: "on"
+              then:
+                - service: notify
+                  target:
+                    entity_id: !notify_device
+                  data:
+                    message: El usuario 1 se ha tomado las medicinas
+                    
+                - service: input_boolean.turn_off
+                  data: {}
+                  target:
+                    entity_id: !input_boolean
+                - stop: Medicación tomada
+      - service: notify
+        target:
+          entity_id: !notify_device
+        data:
+          message: El usuario 1 ha olvidado su medicación
