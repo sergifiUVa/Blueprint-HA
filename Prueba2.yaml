@@ -1,5 +1,5 @@
 blueprint:
-  name: Prueba plantilla medicación
+  name: Prueba plantilla 2
   description: Inicia recordatorio de toma de medicación a través de Alexa e informa al cuidador si se la ha tomado o no 
   domain: automation
   input:
