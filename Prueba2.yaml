@@ -79,6 +79,8 @@ action:
     target:
       entity_id: !input input_boolean
       
+    !input optional_action
+      
   - delay:
       hours: 0
       minutes: !input ask_later_wait_time
