@@ -71,7 +71,7 @@ blueprint:
 
 trigger:
   - platform: mqtt
-    topic: !mqtt_topic
+    topic: "!mqtt_topic"
     payload: !mqtt_payload
     
 action:
