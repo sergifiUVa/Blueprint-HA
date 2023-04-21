@@ -64,7 +64,7 @@ blueprint:
     alexa_device:
       name: Dispositivo Alexa
       description: Elige el dispositivo Alexa para notificar al usuario
-     selector:
+      selector:
         entity:
           domain: media_player
       default: ""
