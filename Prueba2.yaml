@@ -104,7 +104,7 @@ action:
     else:
       - repeat:
           count: "3"
-          sequence: !input optional_action
+          sequence: 
             - delay:
                 hours: 0
                 minutes: !input ask_later_wait_time
