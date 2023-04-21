@@ -106,6 +106,7 @@ action:
     then:
       - device_id: !input notify_device
         domain: mobile_app
+        type: notify
         title: !input notification_title_1
         message: !input notification_message_1
           
@@ -137,6 +138,7 @@ action:
               then:
                 - device_id: !input notify_device
                   domain: mobile_app
+                  type: notify
                   title: !input notification_title_1
                   message: !input notification_message_1
                     
@@ -147,5 +149,6 @@ action:
                 - stop: Medicación tomada
       - device_id: !input notify_device
         domain: mobile_app
+        type: notify
         title: !input notification_title_2
         message: !input notification_message_2
