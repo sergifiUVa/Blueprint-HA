@@ -55,8 +55,8 @@ blueprint:
       default: 30
       selector:
         number:
-          min: 5
-          max: 1440
+          min: 1
+          max: 120
           unit_of_measurement: minutes
           step: 1
           mode: slider
@@ -76,6 +76,7 @@ trigger:
     
 action:
   - service: input_boolean.turn_off
+    data: {}
     target:
       entity_id: !input input_boolean
       
@@ -93,8 +94,8 @@ action:
       
   - delay:
       hours: 0
-      minutes: 0
-      seconds: 10
+      minutes: !input ask_later_wait_time
+      seconds: 0
       milliseconds: 0
       
   - if:
@@ -109,6 +110,7 @@ action:
           message: El usuario 1 se ha tomado la medicación
           
       - service: input_boolean.turn_off
+        data: {}
         target:
           entity_id: !input input_boolean
           
@@ -120,12 +122,11 @@ action:
               target:
                 entity_id: !input alexa_device
               data:
-                message: Le recuerdo que debe tomarse la medicación
-                
+                message: Le recuerdo que debe tomarse la medicación 
             - delay:
                 hours: 0
-                minutes: 0
-                seconds: 10
+                minutes: !input ask_later_wait_time
+                seconds: 0
                 milliseconds: 0
             - if:
                 - condition: state
@@ -139,6 +140,7 @@ action:
                     message: El usuario 1 se ha tomado las medicinas
                     
                 - service: input_boolean.turn_off
+                  data: {}
                   target:
                     entity_id: !input input_boolean
                 - stop: Medicación tomada
