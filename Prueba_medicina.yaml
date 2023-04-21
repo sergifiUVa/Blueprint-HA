@@ -71,24 +71,24 @@ blueprint:
 
 trigger:
   - platform: mqtt
-    topic: "!mqtt_topic"
-    payload: !mqtt_payload
+    topic: !input mqtt_topic
+    payload: !input !mqtt_payload
     
 action:
   - service: input_boolean.turn_off
     data: {}
     target:
-      entity_id: !input_boolean
+      entity_id: !input input_boolean
       
   - service: media_player.volume_set
     data:
       volume_level: 0.09
     target:
-      entity_id: !alexa_device
+      entity_id: !input alexa_device
       
   - service: notify
     target:
-      entity_id: !alexa_device
+      entity_id: !input alexa_device
     data:
       message: Hora de tomarse la medicación
       
@@ -100,19 +100,19 @@ action:
       
   - if:
       - condition: state
-        entity_id: !input_boolean
+        entity_id: !input input_boolean
         state: "on"
     then:
       - service: notify
         target:
-          entity_id: !notify_device
+          entity_id: !input notify_device
         data:
           message: El usuario 1 se ha tomado la medicación
           
       - service: input_boolean.turn_off
         data: {}
         target:
-          entity_id: !input_boolean
+          entity_id: !input input_boolean
           
     else:
       - repeat:
@@ -120,7 +120,7 @@ action:
           sequence:
             - service: notify
               target:
-                entity_id: !alexa_device
+                entity_id: !input alexa_device
               data:
                 message: Le recuerdo que debe tomarse la medicación
                 
@@ -131,22 +131,22 @@ action:
                 milliseconds: 0
             - if:
                 - condition: state
-                  entity_id: !input_boolean
+                  entity_id: !input input_boolean
                   state: "on"
               then:
                 - service: notify
                   target:
-                    entity_id: !notify_device
+                    entity_id: !input notify_device
                   data:
                     message: El usuario 1 se ha tomado las medicinas
                     
                 - service: input_boolean.turn_off
                   data: {}
                   target:
-                    entity_id: !input_boolean
+                    entity_id: !input input_boolean
                 - stop: Medicación tomada
       - service: notify
         target:
-          entity_id: !notify_device
+          entity_id: !input notify_device
         data:
           message: El usuario 1 ha olvidado su medicación
