@@ -72,7 +72,7 @@ blueprint:
 trigger:
   - platform: mqtt
     topic: !input mqtt_topic
-    payload: !input !mqtt_payload
+    payload: !input mqtt_payload
     
 action:
   - service: input_boolean.turn_off
