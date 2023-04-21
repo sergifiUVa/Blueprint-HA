@@ -79,8 +79,6 @@ action:
     target:
       entity_id: !input input_boolean
       
-  - !input optional_action
-      
   - delay:
       hours: 0
       minutes: !input ask_later_wait_time
@@ -106,8 +104,7 @@ action:
     else:
       - repeat:
           count: "3"
-          sequence: 
-            - !input optional_action
+          sequence: !input optional_action
             - delay:
                 hours: 0
                 minutes: !input ask_later_wait_time
