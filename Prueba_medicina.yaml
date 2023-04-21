@@ -90,6 +90,8 @@ action:
     data:
       target: !input alexa_device
       message: Hora de tomarse la medicación
+      data:
+        type: tts
       
   - delay:
       hours: 0
@@ -120,6 +122,8 @@ action:
               data:
                 target: !input alexa_device
                 message: Le recuerdo que debe tomarse la medicación 
+                data:
+                  type: tts
               
             - delay:
                 hours: 0
